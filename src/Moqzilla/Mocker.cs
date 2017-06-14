@@ -10,7 +10,7 @@ namespace Moqzilla
     /// <summary>
     /// A container for dynamically creating mocks.
     /// </summary>
-    public class Moqzilla
+    public class Mocker
     {
         /// <summary>
         /// Mock repository.
@@ -30,7 +30,7 @@ namespace Moqzilla
         /// <summary>
         /// Create a Moqzilla container.
         /// </summary>
-        public Moqzilla()
+        public Mocker()
         {
             _repository = new Dictionary<Type, object>();
         }
@@ -50,7 +50,7 @@ namespace Moqzilla
         /// <summary>
         /// Creates an object, mocking up all dependencies in the constructor.
         /// </summary>
-        /// <exception cref="MoqzillaException">Thrown when no mockable constructor could be found.</exception>
+        /// <exception cref="MockerException">Thrown when no mockable constructor could be found.</exception>
         public TSubject Create<TSubject>()
             where TSubject : class
         {
@@ -68,7 +68,7 @@ namespace Moqzilla
 
             // If there are no constructors, fail.
             if (!validConstructors.Any())
-                throw new MoqzillaException(MoqzillaExceptionType.NoValidConstructors);
+                throw new MockerException(MockerExceptionType.NoValidConstructors);
 
             // Choose the constructor with the most dependencies.
             var mostSpecificConstructor = constructors

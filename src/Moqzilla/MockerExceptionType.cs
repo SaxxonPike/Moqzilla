@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Moqzilla
 {
-    internal enum MoqzillaExceptionType
+    internal enum MockerExceptionType
     {
         NoValidConstructors = 1
     }

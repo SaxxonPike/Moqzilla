@@ -12,7 +12,7 @@ using NUnit.Framework;
 namespace Moqzilla.Test
 {
     [TestFixture]
-    public class MoqzillaTestFixture
+    public class MockerTestFixture
     {
 
         #region Test Subject Classes
@@ -82,22 +82,22 @@ namespace Moqzilla.Test
         public void Create_Throws_WhenAttemptingToCreateClassWithoutMockableDependencies()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             Action act = () =>
                 moqzilla.Create<TestSubjectWithoutValidConstructorExample>();
 
             // Assert.
-            act.ShouldThrow<MoqzillaException>()
-                .WithMessage("Moqzilla could not find constructors that consist entirely of interfaces.");
+            act.ShouldThrow<MockerException>()
+                .WithMessage("Mocker could not find constructors that consist entirely of interfaces.");
         }
 
         [Test]
         public void Create_DoesNotThrow_WhenNoMocksRequired()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             Action act = () =>
@@ -111,7 +111,7 @@ namespace Moqzilla.Test
         public void Create_DoesNotThrow_WhenMockingSingleDependency()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             Action act = () => 
@@ -125,7 +125,7 @@ namespace Moqzilla.Test
         public void Create_DoesNotThrow_WhenMockingMultipleDependencies()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             Action act = () =>
@@ -139,7 +139,7 @@ namespace Moqzilla.Test
         public void Create_ReturnsCorrectType()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
             
             // Act.
             var obj = moqzilla.Create<TestSubjectWithMultipleDependenciesExample>();
@@ -153,7 +153,7 @@ namespace Moqzilla.Test
         public void Create_UsesPreexistingMocks()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
             var mock = moqzilla.Mock<IDisposable>();
             var obj = moqzilla.Create<TestSubjectWithSingleDependencyExample>();
 
@@ -168,7 +168,7 @@ namespace Moqzilla.Test
         public void Create_UsesPostexistingMocks()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
             var obj = moqzilla.Create<TestSubjectWithSingleDependencyExample>();
             var mock = moqzilla.Mock<IDisposable>();
 
@@ -183,7 +183,7 @@ namespace Moqzilla.Test
         public void Mock_ReturnsSameObject()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             var obj0 = moqzilla.Mock<IDisposable>();
@@ -197,7 +197,7 @@ namespace Moqzilla.Test
         public void Mock_InjectsCorrectGenericMock()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             var dep = moqzilla.Mock<IEnumerable<string>>();
@@ -212,7 +212,7 @@ namespace Moqzilla.Test
         public void Reset_ClearsMockRepository()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             var obj0 = moqzilla.Mock<IDisposable>();
@@ -227,7 +227,7 @@ namespace Moqzilla.Test
         public void Reset_ClearsSingleMock()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             var disposable0 = moqzilla.Mock<IDisposable>();
@@ -245,7 +245,7 @@ namespace Moqzilla.Test
         public void Inject_SetsSingleMock()
         {
             // Arrange.
-            var moqzilla = new Moqzilla();
+            var moqzilla = new Mocker();
 
             // Act.
             var oldObj = moqzilla.Mock<IDisposable>();

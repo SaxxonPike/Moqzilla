@@ -39,10 +39,10 @@ Moqzilla works with Moq in an NUnit test like so:
 public void MyTest()
 {
     // Arrange.
-    var moqzilla = new Moqzilla();
-    var myObject = moqzilla.Create<MyClass>();
+    var mocker = new Mocker();
+    var myObject = mocker.Create<MyClass>();
     
-    var mockedDependency = moqzilla.Get<IDependency>();
+    var mockedDependency = mocker.Mock<IDependency>();
     mockedDependency.Setup(m => m.GetTheNumber()).Returns(4);
     
     // Act.
