@@ -8,7 +8,7 @@
     <PackageReference Include="FluentAssertions" Version="[4.12.0,5.0.0)" />
     <PackageReference Include="NUnit" Version="[3.7.0" />
 	<PackageReference Include="Moq" Version="[4.0.*,4.2.*]" Condition="'$(TargetFramework)' == 'net40'" />
-	<PackageReference Include="Moq" Version="[4.7.0" Condition="'$(TargetFramework)' == 'net45'" />
+	<PackageReference Include="Moq" Version="[4.0.*" Condition="'$(TargetFramework)' == 'net45'" />
 	<PackageReference Include="Moq" Version="[4.7.0" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
   </ItemGroup>
 

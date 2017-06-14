@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Moq;
 using System.Reflection;
@@ -49,6 +50,7 @@ namespace Moqzilla
         /// <summary>
         /// Creates an object, mocking up all dependencies in the constructor.
         /// </summary>
+        /// <exception cref="MoqzillaException">Thrown when no mockable constructor could be found.</exception>
         public TSubject Create<TSubject>()
             where TSubject : class
         {
@@ -118,11 +120,33 @@ namespace Moqzilla
         }
 
         /// <summary>
-        /// Removes all mocks from the container. This does not affect objects already created
+        /// Removes all mocks from the container. Objects created with
+        /// <see cref="Create"/> prior to this call are not affected.
         /// </summary>
         public void Reset()
         {
             _repository.Clear();
+        }
+
+        /// <summary>
+        /// Removes a single mock from the container. Objects created with
+        /// <see cref="Create"/> prior to this call are not affected.
+        /// </summary>
+        public void Reset<TSubject>()
+        {
+            _repository.Remove(typeof(TSubject));
+        }
+
+        /// <summary>
+        /// Injects a mock into the container. Objects created with
+        /// <see cref="Create"/> prior to this call are not affected.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when the specified mock is null.</exception>
+        public void Inject<TSubject>(Mock<TSubject> mock)
+            where TSubject : class
+        {
+            _repository[typeof(TSubject)] = mock
+                ?? throw new ArgumentNullException(nameof(mock));
         }
     }
 }

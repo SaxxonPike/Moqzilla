@@ -5,6 +5,8 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
+// ReSharper disable UnusedMethodReturnValue.Local
+// ReSharper disable UnusedParameter.Local
 // ReSharper disable ClassNeverInstantiated.Local
 
 namespace Moqzilla.Test
@@ -46,8 +48,6 @@ namespace Moqzilla.Test
         /// </summary>
         private class TestSubjectWithMultipleDependenciesExample
         {
-            private readonly IDisposable _disposable;
-            private readonly IComparable _comparable;
             private readonly IEnumerable<string> _enumerable;
 
             public TestSubjectWithMultipleDependenciesExample(
@@ -55,14 +55,12 @@ namespace Moqzilla.Test
                 IComparable comparable, 
                 IEnumerable<string> enumerable)
             {
-                _disposable = disposable;
-                _comparable = comparable;
                 _enumerable = enumerable;
             }
 
-            public string[] Enumerate()
+            public IEnumerator<string> GetEnumerator()
             {
-                return _enumerable.ToArray();
+                return _enumerable.GetEnumerator();
             }
         }
 
@@ -179,6 +177,85 @@ namespace Moqzilla.Test
 
             // Assert.
             mock.Verify(x => x.Dispose());
+        }
+
+        [Test]
+        public void Mock_ReturnsSameObject()
+        {
+            // Arrange.
+            var moqzilla = new Moqzilla();
+
+            // Act.
+            var obj0 = moqzilla.Mock<IDisposable>();
+            var obj1 = moqzilla.Mock<IDisposable>();
+
+            // Assert.
+            obj0.Should().BeSameAs(obj1);
+        }
+
+        [Test]
+        public void Mock_InjectsCorrectGenericMock()
+        {
+            // Arrange.
+            var moqzilla = new Moqzilla();
+
+            // Act.
+            var dep = moqzilla.Mock<IEnumerable<string>>();
+            var obj = moqzilla.Create<TestSubjectWithMultipleDependenciesExample>();
+            obj.GetEnumerator();
+
+            // Assert.
+            dep.Verify(x => x.GetEnumerator(), Times.Once);
+        }
+
+        [Test]
+        public void Reset_ClearsMockRepository()
+        {
+            // Arrange.
+            var moqzilla = new Moqzilla();
+
+            // Act.
+            var obj0 = moqzilla.Mock<IDisposable>();
+            moqzilla.Reset();
+            var obj1 = moqzilla.Mock<IDisposable>();
+
+            // Assert.
+            obj0.Should().NotBeSameAs(obj1);
+        }
+
+        [Test]
+        public void Reset_ClearsSingleMock()
+        {
+            // Arrange.
+            var moqzilla = new Moqzilla();
+
+            // Act.
+            var disposable0 = moqzilla.Mock<IDisposable>();
+            var comparable0 = moqzilla.Mock<IComparable>();
+            moqzilla.Reset<IDisposable>();
+            var disposable1 = moqzilla.Mock<IDisposable>();
+            var comparable1 = moqzilla.Mock<IComparable>();
+
+            // Assert.
+            disposable0.Should().NotBeSameAs(disposable1);
+            comparable0.Should().BeSameAs(comparable1);
+        }
+
+        [Test]
+        public void Inject_SetsSingleMock()
+        {
+            // Arrange.
+            var moqzilla = new Moqzilla();
+
+            // Act.
+            var oldObj = moqzilla.Mock<IDisposable>();
+            var newObj = new Mock<IDisposable>();
+            moqzilla.Inject(newObj);
+            var output = moqzilla.Mock<IDisposable>();
+
+            // Assert.
+            oldObj.Should().NotBeSameAs(newObj);
+            newObj.Should().BeSameAs(output);
         }
 
         #endregion

@@ -9,6 +9,7 @@
 		<PackageReleaseNotes>Work In Progress</PackageReleaseNotes>
 		<Copyright>(c) 2017 Tony Konzel</Copyright>
 		<PackageTags>automatic auto mocking moq testing test</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
 	<ItemGroup>
 	  <PackageReference Include="Moq" Version="4.2.*" Condition="'$(TargetFramework)' == 'net40'" />
