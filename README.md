@@ -21,14 +21,14 @@ public class MyClass
     private readonly IDependency _dependency;
 
     public MyClass(IDependency dependency)
-	{
-	    _dependency = dependency;
-	}
-	
-	public int GetDoubleTheNumber()
-	{
-	    return _dependency.GetTheNumber() * 2;
-	}
+    {
+        _dependency = dependency;
+    }
+    
+    public int GetDoubleTheNumber()
+    {
+        return _dependency.GetTheNumber() * 2;
+    }
 }
 ```
 
@@ -41,15 +41,15 @@ public void MyTest()
     // Arrange.
     var moqzilla = new Moqzilla();
     var myObject = moqzilla.Create<MyClass>();
-	
+    
     var mockedDependency = moqzilla.Get<IDependency>();
     mockedDependency.Setup(m => m.GetTheNumber()).Returns(4);
-	
-	// Act.
-	var observedValue = myObject.GetDoubleTheNumber();
-	
-	// Assert.
-	Assert.AreEqual(8, observedValue);
+    
+    // Act.
+    var observedValue = myObject.GetDoubleTheNumber();
+
+    // Assert.
+    Assert.AreEqual(8, observedValue);
 }
 ```
 
