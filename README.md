@@ -1,6 +1,6 @@
 # Moqzilla
 
-Simple automatic mocking using Moq
+Simple automatic mocking using Moq.
 
 ### Example
 
