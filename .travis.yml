@@ -1,14 +1,14 @@
 language: csharp
-solution: Moqzilla.sln
+solution: src/Moqzilla.sln
 sudo: false
 addons:
   apt:
     packages:
     - nunit-console
 script:
-  - xbuild /p:Configuration=Debug Moqzilla.sln
+  - xbuild /p:Configuration=Debug src/Moqzilla.sln
 before_script:
-  - nuget restore Moqzilla.sln
+  - nuget restore src/Moqzilla.sln
 after_script:
-  - nunit-console Moqzilla.Test/bin/Debug/net45/Moqzilla.Test.dll
+  - nunit-console src/Moqzilla.Test/bin/Debug/net45/Moqzilla.Test.dll
  
