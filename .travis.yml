@@ -4,11 +4,14 @@ sudo: false
 addons:
   apt:
     packages:
-    - nunit-console
+      - nunit-console
+      - libunwind8
+before_install:
+  - chmod a+x "$TRAVIS_MSBUILD_BIN"/msbuild-prepare
+  - msbuild-prepare
 script:
-  - xbuild /p:Configuration=Debug src/Moqzilla.sln
+  - msbuild /p:Configuration=Debug src/Moqzilla.sln
 before_script:
   - nuget restore src/Moqzilla.sln
 after_script:
   - nunit-console src/Moqzilla.Test/bin/Debug/net45/Moqzilla.Test.dll
- 
