@@ -209,6 +209,33 @@ namespace Moqzilla.Test
         }
 
         [Test]
+        public void Mock_InvokesPassedAction()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+            var executed = false;
+
+            // Act.
+            moqzilla.Mock<IDisposable>(mock => executed = true);
+
+            // Assert.
+            executed.Should().BeTrue();
+        }
+
+        [Test]
+        public void Mock_ReturnsMockAfterInvokingAction()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+
+            // Act.
+            var output = moqzilla.Mock<IDisposable>(mock => { });
+
+            // Assert.
+            output.Should().BeSameAs(moqzilla.Mock<IDisposable>());
+        }
+
+        [Test]
         public void Reset_ClearsMockRepository()
         {
             // Arrange.
@@ -256,6 +283,43 @@ namespace Moqzilla.Test
             // Assert.
             oldObj.Should().NotBeSameAs(newObj);
             newObj.Should().BeSameAs(output);
+        }
+
+        [Test]
+        public void RegisterActivation_Should_CauseActivationsToBeRunOnCreate()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+            var activated = false;
+
+            // Act.
+            moqzilla.Activate<IDisposable>(m => activated = true);
+            moqzilla.Create<TestSubjectWithSingleDependencyExample>();
+
+            // Assert.
+            activated.Should().BeTrue();
+        }
+
+        [Test]
+        public void RegisterActivation_Should_CauseMultipleActivationsToBeRunOnCreate()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+            var activated0 = false;
+            var activated1 = false;
+
+            // Act.
+            moqzilla.Activate<IDisposable>(m => activated0 = true);
+            moqzilla.Activate<IDisposable>(m =>
+            {
+                activated0.Should().BeTrue();
+                activated1 = true;
+            });
+            moqzilla.Create<TestSubjectWithSingleDependencyExample>();
+
+            // Assert.
+            activated0.Should().BeTrue();
+            activated1.Should().BeTrue();
         }
 
         #endregion

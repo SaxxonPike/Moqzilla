@@ -2,9 +2,9 @@
 
 Simple automatic mocking using Moq.
 
-### Example
+### Example Setup
 
-Assuming we have an interface like this:
+Assume we have an interface like this:
 
 ```csharp
 public interface IDependency
@@ -32,6 +32,8 @@ public class MyClass
 }
 ```
 
+### General Usage
+
 Moqzilla works with Moq in an NUnit test like so:
 
 ```csharp
@@ -55,6 +57,53 @@ public void MyTest()
 
 It will also work if you construct your mock before creating
 the object.
+
+### Mock Blocks
+
+To keep mock setup more isolated, configuration blocks can be used like so:
+
+```csharp
+[Test]
+public void MyTest()
+{
+    // Arrange.
+    var mocker = new Mocker();
+    var myObject = mocker.Create<MyClass>();
+    
+    mocker.Mock<IDependency>(mock => {
+	    mock.Setup(m => m.GetTheNumber()).Returns(4);
+	});
+    
+    // Act.
+    var observedValue = myObject.GetDoubleTheNumber();
+
+    // Assert.
+    Assert.AreEqual(8, observedValue);
+}
+```
+
+### Activation
+
+Mocks can be configured as objects are created. Activators for a dependency are run
+each time `Mocker.Create<T>` is called, if they are in the constructor.
+
+```csharp
+[Test]
+public void MyTest()
+{
+    // Arrange.
+    var mocker = new Mocker();
+    var myObject = mocker.Create<MyClass>();
+    
+	mocker.Activate<IDependency>(mock => mock.Setup(m => m.GetTheNumber()).Returns(4));
+    
+    // Act.
+    var observedValue = myObject.GetDoubleTheNumber();
+
+    // Assert.
+    Assert.AreEqual(8, observedValue);
+}
+```
 
 ### Prerequisites
 

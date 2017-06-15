@@ -13,26 +13,32 @@ namespace Moqzilla
     public class Mocker
     {
         /// <summary>
-        /// Mock repository.
+        /// Mock repository. Values are Mock of T
         /// </summary>
-        private readonly IDictionary<Type, object> _repository;
+        private readonly IDictionary<Type, object> _mockRepository;
+
+        /// <summary>
+        /// Activator repository. Values are Action of T
+        /// </summary>
+        private readonly IDictionary<Type, object> _activatorRepository;
 
         /// <summary>
         /// Cached empty Type array.
         /// </summary>
-        private static readonly Type[] EmptyTypeArray = new Type[] { };
+        private static readonly Type[] EmptyTypeArray = { };
 
         /// <summary>
         /// Cached empty object array.
         /// </summary>
-        private static readonly object[] EmptyObjectArray = new object[] { };
+        private static readonly object[] EmptyObjectArray = { };
 
         /// <summary>
         /// Create a Moqzilla container.
         /// </summary>
         public Mocker()
         {
-            _repository = new Dictionary<Type, object>();
+            _mockRepository = new Dictionary<Type, object>();
+            _activatorRepository = new Dictionary<Type, object>();
         }
 
         /// <summary>
@@ -80,6 +86,17 @@ namespace Moqzilla
                 .Select(p => Get(p.ParameterType).Object)
                 .ToArray();
 
+            // Run activations.
+            foreach (var parameter in parameters[mostSpecificConstructor])
+            {
+                if (!_activatorRepository.ContainsKey(parameter.ParameterType))
+                    continue;
+
+                var activator = _activatorRepository[parameter.ParameterType];
+                var activatorType = activator.GetType();
+                activatorType.GetMethod("Invoke").Invoke(activator, new object[] { Get(parameter.ParameterType) });
+            }
+
             // Instantiate the object.
             return (TSubject)mostSpecificConstructor.Invoke(constructorArguments);
         }
@@ -90,8 +107,8 @@ namespace Moqzilla
         protected Mock Get(Type type)
         {
             // Return a cached mock, if we have one.
-            if (_repository.ContainsKey(type))
-                return (Mock)_repository[type];
+            if (_mockRepository.ContainsKey(type))
+                return (Mock)_mockRepository[type];
 
             // Create a mock - reflection is needed for invocation due to how Moq works.
             var mock = typeof(Mock<>)
@@ -99,7 +116,7 @@ namespace Moqzilla
                 .GetConstructor(EmptyTypeArray)
                 ?.Invoke(EmptyObjectArray);
 
-            _repository[type] = mock;
+            _mockRepository[type] = mock;
             return (Mock)mock;
         }
 
@@ -111,42 +128,82 @@ namespace Moqzilla
         {
             var type = typeof(TSubject);
 
-            if (_repository.ContainsKey(type))
-                return (Mock<TSubject>) _repository[type];
+            if (_mockRepository.ContainsKey(type))
+                return (Mock<TSubject>) _mockRepository[type];
 
             var mock = new Mock<TSubject>();
-            _repository[type] = mock;
+            _mockRepository[type] = mock;
+            return mock;
+        }
+
+        /// <summary>
+        /// Set up a mock within the container. This allows you to pass in
+        /// a block solely for the purpose of configuring a mock.
+        /// </summary>
+        public Mock<TSubject> Mock<TSubject>(Action<Mock<TSubject>> setupMethod)
+            where TSubject : class
+        {
+            var mock = Mock<TSubject>();
+            setupMethod?.Invoke(mock);
             return mock;
         }
 
         /// <summary>
         /// Removes all mocks from the container. Objects created with
-        /// <see cref="Create"/> prior to this call are not affected.
+        /// <see cref="Create{TSubject}"/> prior to this call are not affected.
+        /// This does not clear activations.
         /// </summary>
         public void Reset()
         {
-            _repository.Clear();
+            _mockRepository.Clear();
         }
 
         /// <summary>
         /// Removes a single mock from the container. Objects created with
-        /// <see cref="Create"/> prior to this call are not affected.
+        /// <see cref="Create{TSubject}"/> prior to this call are not affected.
+        /// This does not clear activations.
         /// </summary>
         public void Reset<TSubject>()
         {
-            _repository.Remove(typeof(TSubject));
+            _mockRepository.Remove(typeof(TSubject));
         }
 
         /// <summary>
         /// Injects a mock into the container. Objects created with
-        /// <see cref="Create"/> prior to this call are not affected.
+        /// <see cref="Create{TSubject}"/> prior to this call are not affected.
         /// </summary>
         /// <exception cref="ArgumentNullException">Thrown when the specified mock is null.</exception>
         public void Inject<TSubject>(Mock<TSubject> mock)
             where TSubject : class
         {
-            _repository[typeof(TSubject)] = mock
+            _mockRepository[typeof(TSubject)] = mock
                 ?? throw new ArgumentNullException(nameof(mock));
+        }
+
+        /// <summary>
+        /// Registers an activation. When <see cref="Create{TSubject}"/> is invoked,
+        /// activations are invoked before object creation. This is used to set up consistent parts
+        /// of a mock. 
+        /// </summary>
+        public void Activate<TSubject>(Action<Mock<TSubject>> activator)
+            where TSubject : class
+        {
+            var type = typeof(TSubject);
+
+            if (_activatorRepository.ContainsKey(type))
+            {
+                // Chain existing activations.
+                var currentActivation = (Action<Mock<TSubject>>)_activatorRepository[type];
+                _activatorRepository[type] = (Action<Mock<TSubject>>)(mock =>
+                {
+                    currentActivation(mock);
+                    activator(mock);
+                });
+            }
+            else
+            {
+                _activatorRepository[type] = activator;
+            }
         }
     }
 }
