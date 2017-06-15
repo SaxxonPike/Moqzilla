@@ -95,7 +95,7 @@ public void MyTest()
     var mocker = new Mocker();
     var myObject = mocker.Create<MyClass>();
     
-	mocker.Activate<IDependency>(mock => mock.Setup(m => m.GetTheNumber()).Returns(4));
+    mocker.Activate<IDependency>(mock => mock.Setup(m => m.GetTheNumber()).Returns(4));
     
     // Act.
     var observedValue = myObject.GetDoubleTheNumber();
