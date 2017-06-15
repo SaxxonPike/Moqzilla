@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard1.3;net45;net40</TargetFrameworks>
 		<PackageId>Moqzilla</PackageId>
-		<PackageVersion>0.0.2</PackageVersion>
+		<PackageVersion>1.0.0</PackageVersion>
 		<Title>Moqzilla</Title>
 		<Authors>Tony Konzel</Authors>
 		<Description>Automatic test subject mocking using Moq.</Description>
