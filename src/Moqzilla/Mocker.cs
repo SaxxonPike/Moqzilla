@@ -78,7 +78,7 @@ namespace Moqzilla
 
             // Choose the constructor with the most dependencies.
             var mostSpecificConstructor = constructors
-                .OrderBy(c => parameters[c].Length)
+                .OrderByDescending(c => parameters[c].Length)
                 .First();
 
             // Pull mocked objects for the constructor from the repository.
