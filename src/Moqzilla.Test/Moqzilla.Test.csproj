@@ -4,16 +4,16 @@
 	<TargetFrameworks>netstandard1.3;net45;net40</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Moqzilla\Moqzilla.csproj" />
-  </ItemGroup>
-
 	<ItemGroup>
       <PackageReference Include="FluentAssertions" Version="4.*" />
-      <PackageReference Include="Moq" Version="4.2" Condition="'$(TargetFramework)' == 'net40'" />
-      <PackageReference Include="Moq" Version="4.2" Condition="'$(TargetFramework)' == 'net45'" />
-      <PackageReference Include="Moq" Version="4.7" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
+      <PackageReference Include="Moq" Version="4.2.*" Condition="'$(TargetFramework)' == 'net40'" />
+      <PackageReference Include="Moq" Version="*" Condition="'$(TargetFramework)' == 'net45'" />
+      <PackageReference Include="Moq" Version="*" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
       <PackageReference Include="NUnit" Version="3.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Moqzilla\Moqzilla.csproj" />
 	</ItemGroup>  
   
 </Project>

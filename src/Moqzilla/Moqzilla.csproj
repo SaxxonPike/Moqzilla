@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard1.3;net45;net40</TargetFrameworks>
 		<PackageId>Moqzilla</PackageId>
-		<PackageVersion>1.0.2</PackageVersion>
+		<PackageVersion>1.0.3</PackageVersion>
 		<Title>Moqzilla</Title>
 		<Authors>Tony Konzel</Authors>
 		<Description>Automatic test subject mocking using Moq.</Description>
@@ -16,8 +16,8 @@
 		<RepositoryUrl>https://github.com/SaxxonPike/Moqzilla</RepositoryUrl>
 	</PropertyGroup>
 	<ItemGroup>
-      <PackageReference Include="Moq" Version="[4.2,5.0)" Condition="'$(TargetFramework)' == 'net40'" />
-      <PackageReference Include="Moq" Version="[4.2,5.0)" Condition="'$(TargetFramework)' == 'net45'" />
-      <PackageReference Include="Moq" Version="[4.7,5.0)" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
+      <PackageReference Include="Moq" Version="4.2.*" Condition="'$(TargetFramework)' == 'net40'" />
+      <PackageReference Include="Moq" Version="*" Condition="'$(TargetFramework)' == 'net45'" />
+      <PackageReference Include="Moq" Version="*" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
 	</ItemGroup>  
 </Project>
