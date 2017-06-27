@@ -4,6 +4,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 
+// ReSharper disable UnusedMember.Local
 // ReSharper disable UnusedMethodReturnValue.Local
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable ClassNeverInstantiated.Local
@@ -30,6 +31,10 @@ namespace Moqzilla.Test
         {
             private readonly IDisposable _disposable;
 
+            public TestSubjectWithSingleDependencyExample()
+            {
+            }
+
             public TestSubjectWithSingleDependencyExample(
                 IDisposable disposable)
             {
@@ -48,6 +53,10 @@ namespace Moqzilla.Test
         private class TestSubjectWithMultipleDependenciesExample
         {
             private readonly IEnumerable<string> _enumerable;
+
+            public TestSubjectWithMultipleDependenciesExample()
+            {
+            }
 
             public TestSubjectWithMultipleDependenciesExample(
                 IDisposable disposable, 
@@ -165,6 +174,21 @@ namespace Moqzilla.Test
 
         [Test]
         public void Create_UsesPostexistingMocks()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+            var obj = moqzilla.Create<TestSubjectWithSingleDependencyExample>();
+            var mock = moqzilla.Mock<IDisposable>();
+
+            // Act.
+            obj.Dispose();
+
+            // Assert.
+            mock.Verify(x => x.Dispose());
+        }
+
+        [Test]
+        public void Create_UsesCorrectConstructor()
         {
             // Arrange.
             var moqzilla = new Mocker();
