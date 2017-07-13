@@ -1,5 +1,7 @@
 # Moqzilla
 
+[![Build status](https://ci.appveyor.com/api/projects/status/su5csn2yxrq0tfuj?svg=true)](https://ci.appveyor.com/project/SaxxonPike/moqzilla)
+
 Simple automatic mocking using Moq.
 
 ### Example Setup
