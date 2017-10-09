@@ -14,8 +14,34 @@ namespace Moqzilla.Test
     [TestFixture]
     public class MockerTestFixture
     {
-
         #region Test Subject Classes
+
+        /// <summary>
+        /// Used as a target for testing concrete implementation.
+        /// </summary>
+        public class SomeClassWithSomeImplementationDependency
+        {
+            public ISomeImplementation SomeImplementation { get; }
+
+            public SomeClassWithSomeImplementationDependency(ISomeImplementation someImplementation)
+            {
+                SomeImplementation = someImplementation;
+            }
+        }
+        
+        /// <summary>
+        /// Used as a target for testing concrete implementation.
+        /// </summary>
+        public class SomeImplementation : ISomeImplementation
+        {
+        }
+
+        /// <summary>
+        /// Used as a target for testing concrete implementation.
+        /// </summary>
+        public interface ISomeImplementation
+        {
+        }
 
         /// <summary>
         /// Used as a target for testing a constructor without dependencies.
@@ -343,6 +369,21 @@ namespace Moqzilla.Test
             // Assert.
             activated0.Should().BeTrue();
             activated1.Should().BeTrue();
+        }
+
+        [Test]
+        public void Implement_Should_CauseImplementedClassToBeUsed()
+        {
+            // Arrange.
+            var moqzilla = new Mocker();
+            var myObj = new SomeImplementation();
+
+            // Act.
+            moqzilla.Implement<ISomeImplementation>(myObj);
+            var output = moqzilla.Create<SomeClassWithSomeImplementationDependency>();
+
+            // Assert.
+            output.SomeImplementation.Should().Be(myObj);
         }
 
         #endregion

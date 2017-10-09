@@ -23,6 +23,11 @@ namespace Moqzilla
         private readonly IDictionary<Type, object> _activatorRepository;
 
         /// <summary>
+        /// Concrete implementation repository. Values are T.
+        /// </summary>
+        private readonly IDictionary<Type, object> _concreteRepository;
+
+        /// <summary>
         /// Cached empty Type array.
         /// </summary>
         private static readonly Type[] EmptyTypeArray = { };
@@ -39,6 +44,7 @@ namespace Moqzilla
         {
             _mockRepository = new Dictionary<Type, object>();
             _activatorRepository = new Dictionary<Type, object>();
+            _concreteRepository = new Dictionary<Type, object>();
         }
 
         /// <summary>
@@ -83,13 +89,17 @@ namespace Moqzilla
 
             // Pull mocked objects for the constructor from the repository.
             var constructorArguments = parameters[mostSpecificConstructor]
-                .Select(p => Get(p.ParameterType).Object)
+                .Select(p => GetConcrete(p.ParameterType) ?? Get(p.ParameterType).Object)
                 .ToArray();
 
             // Run activations.
             foreach (var parameter in parameters[mostSpecificConstructor])
             {
                 if (!_activatorRepository.ContainsKey(parameter.ParameterType))
+                    continue;
+
+                // Don't activate concrete implementations.
+                if (_concreteRepository.ContainsKey(parameter.ParameterType))
                     continue;
 
                 var activator = _activatorRepository[parameter.ParameterType];
@@ -99,6 +109,16 @@ namespace Moqzilla
 
             // Instantiate the object.
             return (TSubject)mostSpecificConstructor.Invoke(constructorArguments);
+        }
+
+        /// <summary>
+        /// Get a concrete implementation from the repository for a type determined at runtime.
+        /// </summary>
+        protected object GetConcrete(Type type)
+        {
+            return _concreteRepository.ContainsKey(type) 
+                ? _concreteRepository[type] 
+                : null;
         }
 
         /// <summary>
@@ -178,6 +198,18 @@ namespace Moqzilla
         {
             _mockRepository[typeof(TSubject)] = mock
                 ?? throw new ArgumentNullException(nameof(mock));
+        }
+
+        /// <summary>
+        /// Injects a concrete implementation into the container. Objects created with
+        /// <see cref="Create{TSubject}"/> prior to this call are not affected.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">Thrown when the specified object is null.</exception>
+        public void Implement<TSubject>(TSubject obj)
+            where TSubject : class
+        {
+            _concreteRepository[typeof(TSubject)] = obj
+                ?? throw new ArgumentNullException(nameof(obj));
         }
 
         /// <summary>

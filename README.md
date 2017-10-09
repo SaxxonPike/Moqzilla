@@ -95,15 +95,74 @@ public void MyTest()
 {
     // Arrange.
     var mocker = new Mocker();
-    var myObject = mocker.Create<MyClass>();
-    
     mocker.Activate<IDependency>(mock => mock.Setup(m => m.GetTheNumber()).Returns(4));
-    
+
+    var myObject = mocker.Create<MyClass>();
+
     // Act.
     var observedValue = myObject.GetDoubleTheNumber();
 
     // Assert.
     Assert.AreEqual(8, observedValue);
+}
+```
+
+### Injecting Implementations
+
+Sometimes, for the sake of brevity, concrete implementations of an interface might be
+desired. In this case, `Mocker.Implement<T>` can be used.
+
+Suppose we have a dependency that looks kind of like this:
+
+```csharp
+public class Dependency : IDependency
+{
+    public int Value => 4;
+}
+
+public interface IDependency
+{
+    int Value { get; }
+}
+```
+
+And something that consumes the dependency like so...
+
+```csharp
+public class Consumer
+{
+   private readonly IDependency _dependency;
+
+   public Consumer(IDependency dependency)
+   {
+       _dependency = dependency;
+   }
+   
+   public GetValue()
+   {
+       return _dependency.Value;
+   }
+}
+```
+
+We can then use the concrete implementation during testing.
+
+```csharp
+[Test]
+public void MyTest()
+{
+    // Arrange.
+    var mocker = new Mocker();
+    var myDependency = new Dependency();
+    mocker.Implement<IDependency>(myDependency);
+
+    var myObject = mocker.Create<MyClass>();
+
+    // Act.
+    var observedValue = myObject.GetValue();
+    
+    // Assert.
+    Assert.AreEqual(4, observedValue);
 }
 ```
 
