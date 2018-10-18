@@ -123,7 +123,7 @@ namespace Moqzilla.Test
                 moqzilla.Create<TestSubjectWithoutValidConstructorExample>();
 
             // Assert.
-            act.ShouldThrow<MockerException>()
+            act.Should().Throw<MockerException>()
                 .WithMessage("Mocker could not find constructors that consist entirely of interfaces.");
         }
 
@@ -138,7 +138,7 @@ namespace Moqzilla.Test
                 moqzilla.Create<TestSubjectWithNoDependencies>();
 
             // Assert.
-            act.ShouldNotThrow();
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace Moqzilla.Test
                 moqzilla.Create<TestSubjectWithSingleDependencyExample>();
 
             // Assert.
-            act.ShouldNotThrow();
+            act.Should().NotThrow();
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace Moqzilla.Test
                 moqzilla.Create<TestSubjectWithMultipleDependenciesExample>();
 
             // Assert.
-            act.ShouldNotThrow();
+            act.Should().NotThrow();
         }
 
         [Test]

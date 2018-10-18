@@ -169,11 +169,8 @@ public void MyTest()
 ### Prerequisites
 
 - Moq
-  - 4.2+ for .NET Framework
-  - 4.7+ for .NET Standard
 
 ### Explicitly supported frameworks
 
-- .NET Framework 4.0
-- .NET Framework 4.5
-- .NET Standard 1.3
+- .NET Framework 4.6.1
+- .NET Standard 2.0

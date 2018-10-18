@@ -52,11 +52,7 @@ namespace Moqzilla
         /// </summary>
         private static bool TypeIsInterface(Type type)
         {
-            #if NETSTANDARD1_3
-                return type.GetTypeInfo().IsInterface;
-            #else
-                return type.IsInterface;
-            #endif
+            return type.GetTypeInfo().IsInterface;
         }
 
         /// <summary>
@@ -104,7 +100,7 @@ namespace Moqzilla
 
                 var activator = _activatorRepository[parameter.ParameterType];
                 var activatorType = activator.GetType();
-                activatorType.GetMethod("Invoke").Invoke(activator, new object[] { Get(parameter.ParameterType) });
+                activatorType.GetMethod("Invoke")?.Invoke(activator, new object[] { Get(parameter.ParameterType) });
             }
 
             // Instantiate the object.
