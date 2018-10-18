@@ -16,6 +16,6 @@
 		<RepositoryUrl>https://github.com/SaxxonPike/Moqzilla</RepositoryUrl>
 	</PropertyGroup>
 	<ItemGroup>
-      <PackageReference Include="Moq" Version="4.10.0" />
+      <PackageReference Include="Moq" Version="4.*" />
 	</ItemGroup>  
 </Project>
