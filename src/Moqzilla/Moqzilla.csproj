@@ -14,7 +14,16 @@
 		<PackageLicenseUrl>https://github.com/SaxxonPike/Moqzilla/blob/master/LICENSE</PackageLicenseUrl>
 		<PackageProjectUrl>https://github.com/SaxxonPike/Moqzilla</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/SaxxonPike/Moqzilla</RepositoryUrl>
-	</PropertyGroup>
+	
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 	<ItemGroup>
       <PackageReference Include="Moq" Version="4.*" />
 	</ItemGroup>  
